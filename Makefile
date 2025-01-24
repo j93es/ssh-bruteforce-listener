@@ -30,6 +30,7 @@ init:
 	fi
 
 	if [ ! -f "$(PROJECT_DIR)/host.key" ]; then \
+		cd $(PROJECT_DIR) &&
 		sudo ssh-keygen -t rsa -b 2048 -f host.key -N ''; \
 	fi
 	
