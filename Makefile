@@ -15,6 +15,13 @@ update:
 		fi; \
 	fi
 
+update-force:
+	if [ ! -d "$(PROJECT_DIR)" ]; then \
+		sudo git clone $(REPO_URL) $(PROJECT_DIR); \
+	else \
+		cd $(PROJECT_DIR) && sudo git pull || true \
+	fi
+
 init:
 	if [ ! -d "$(PROJECT_DIR)/.env" ]; then \
 		sudo touch $(PROJECT_DIR)/.env; \
@@ -40,3 +47,8 @@ save-pm2:
 
 deploy: update init build stop-pm2 start-pm2 save-pm2
 	@echo "Deployment completed."
+
+deploy-force: update-force init build stop-pm2 start-pm2 save-pm2
+	@echo "Deployment completed."
+
+all: deploy
