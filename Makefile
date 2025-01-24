@@ -19,17 +19,17 @@ update-force:
 	if [ ! -d "$(PROJECT_DIR)" ]; then \
 		sudo git clone $(REPO_URL) $(PROJECT_DIR); \
 	else \
-		cd $(PROJECT_DIR) && sudo git pull || true \
+		cd $(PROJECT_DIR) && sudo git pull || true; \
 	fi
 
 init:
-	if [ ! -d "$(PROJECT_DIR)/.env" ]; then \
+	if [ ! -f "$(PROJECT_DIR)/.env" ]; then \
 		sudo touch $(PROJECT_DIR)/.env; \
 		echo read README.md for deployment; \
 		exit 1; \
 	fi
 
-	if [ ! -d "$(PROJECT_DIR)/host.key" ]; then \
+	if [ ! -f "$(PROJECT_DIR)/host.key" ]; then \
 		sudo ssh-keygen -t rsa -b 2048 -f host.key -N ''; \
 	fi
 	
