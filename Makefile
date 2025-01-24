@@ -5,6 +5,16 @@ PROJECT_DIR=/srv/ssh-bruteforce-listener/ssh-bruteforce-listener
 # Targets
 .PHONY: all init update build deploy start-pm2 stop-pm2 save-pm2
 
+update:
+	if [ ! -d "$(PROJECT_DIR)" ]; then \
+		sudo git clone $(REPO_URL) $(PROJECT_DIR); \
+	else \
+		cd $(PROJECT_DIR) && if sudo git pull | grep -q "Already up to date."; then \
+			echo "No changes to update. Exiting..."; \
+			exit 1; \
+		fi; \
+	fi
+
 init:
 	if [ ! -d "$(PROJECT_DIR)/.env" ]; then \
 		sudo touch $(PROJECT_DIR)/.env; \
@@ -14,16 +24,6 @@ init:
 
 	if [ ! -d "$(PROJECT_DIR)/host.key" ]; then \
 		sudo ssh-keygen -t rsa -b 2048 -f host.key -N ''; \
-	fi
-
-update:
-	if [ ! -d "$(PROJECT_DIR)" ]; then \
-		sudo git clone $(REPO_URL) $(PROJECT_DIR); \
-	else \
-		cd $(PROJECT_DIR) && if sudo git pull | grep -q "Already up to date."; then \
-			echo "No changes to update. Exiting..."; \
-			exit 1; \
-		fi; \
 	fi
 	
 build:
@@ -38,5 +38,5 @@ start-pm2:
 save-pm2:
 	sudo pm2 save
 
-deploy: init update build stop-pm2 start-pm2 save-pm2
+deploy: update init build stop-pm2 start-pm2 save-pm2
 	@echo "Deployment completed."
