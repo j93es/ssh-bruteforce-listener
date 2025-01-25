@@ -12,7 +12,7 @@ DISCORD_WEBHOOK_URL={discord webhook url}
 NOTIFY_TRESHOLD={해당 값 이상의 ip가 ban되었고, ban된 ip가 증가할 때마다 알림 제공}
 ```
 
-# Makefile
+# Deploy
 
 ```sh
 # git repo가 local과 다를때, 선택적으로 deploy
