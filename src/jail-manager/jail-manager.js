@@ -88,9 +88,9 @@ export default class JailManager {
 
   // unban 작업을 스케줄링하는 메서드
   scheduleUnban(ip, delay) {
-    setTimeout(() => {
-      this.unbanIP(ip);
-    }, delay);
+    // setTimeout(() => {
+    //   this.unbanIP(ip);
+    // }, delay);
   }
 
   // 파일에서 ban 리스트를 읽어오는 메서드
