@@ -32,7 +32,7 @@ init:
 	if [ ! -f "$(PROJECT_DIR)/host.key" ]; then \
 		cd $(PROJECT_DIR) && \
 		sudo ssh-keygen -t rsa -b 2048 -f host.key -N '' &&
-		sudo chmod +r $(PROJECT_DIR)/host.key \
+		sudo chmod +r $(PROJECT_DIR)/host.key; \
 	fi
 	
 build:
