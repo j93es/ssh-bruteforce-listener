@@ -1,5 +1,5 @@
 # Variables
-REPO_URL=https://github.com/J93es/ssh-bruteforce-listener.git
+REPO_URL=https://github.com/j93es/ssh-bruteforce-listener.git
 PROJECT_DIR=/srv/ssh-bruteforce-listener/ssh-bruteforce-listener
 
 # Targets
