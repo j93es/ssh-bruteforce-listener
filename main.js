@@ -8,6 +8,9 @@ import JailManager from "./src/jail-manager/jail-manager.js";
 import NotificationManager from "./src/notification-manager/notification-manager.js";
 
 try {
+  console.log = console.log.bind(console, `[${new Date()}]`);
+  console.info = console.info.bind(console, `[${new Date()}]`);
+  console.error = console.error.bind(console, `[${new Date()}]`);
   const { Server } = ssh2Pkg;
 
   // 알림을 위한 임계값

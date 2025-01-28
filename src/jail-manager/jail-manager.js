@@ -44,6 +44,7 @@ export default class JailManager {
 
     // 일정 시간 후 unban 스케줄링
     this.scheduleUnban(ip, duration);
+    console.info(`IP ${ip} is banned`);
   }
 
   // IP를 unban하는 메서드
@@ -51,6 +52,7 @@ export default class JailManager {
     if (this.banList[ip]) {
       delete this.banList[ip];
       this.saveBanListToFile();
+      console.info(`IP ${ip} is unbanned`);
     }
   }
 
