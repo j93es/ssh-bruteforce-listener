@@ -11,6 +11,7 @@ try {
   console.log = console.log.bind(console, `[${new Date()}]`);
   console.info = console.info.bind(console, `[${new Date()}]`);
   console.error = console.error.bind(console, `[${new Date()}]`);
+
   const { Server } = ssh2Pkg;
 
   // 알림을 위한 임계값
@@ -87,9 +88,7 @@ try {
       });
 
       client.on("end", () => {
-        console.log(
-          `[${clientIP}] ${new Date()} | ${JSON.stringify(attemptsLog)}`
-        );
+        console.log(`[${clientIP}] | ${JSON.stringify(attemptsLog)}`);
 
         if (jailManager.getNumberOfBanList() >= NOTIFY_TRESHOLD) {
           const currentNumberOfBanList = jailManager.getNumberOfBanList();
@@ -106,7 +105,7 @@ try {
       });
 
       client.on("error", (err) => {
-        console.error(`[${clientIP}] ${new Date()} | ${err.message}`);
+        console.error(`[${clientIP}] | ${err.message}`);
         return;
       });
     }
