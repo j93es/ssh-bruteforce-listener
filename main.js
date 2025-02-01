@@ -24,19 +24,6 @@ try {
 
   const jailManager = new JailManager(path.resolve());
 
-  const checkIp = (client, ip) => {
-    if (jailManager.isIPBanned(ip)) {
-      attemptsLog.push({
-        isBanned: true,
-      });
-      setTimeout(() => {
-        client.end();
-      }, ATTEMPT_INTERVAL);
-
-      return;
-    }
-  };
-
   const server = new Server(
     {
       hostKeys: [fs.readFileSync("host.key")],
@@ -49,7 +36,16 @@ try {
       const attemptsLog = []; // 시도한 id, 비밀번호 저장
 
       client.on("authentication", (ctx) => {
-        checkIp(client, clientIP);
+        if (jailManager.isIPBanned(clientIP)) {
+          attemptsLog.push({
+            isBanned: true,
+          });
+          setTimeout(() => {
+            client.end();
+          }, ATTEMPT_INTERVAL);
+
+          return;
+        }
 
         if (ctx.method !== AUTH_METHOD) {
           return setTimeout(() => {
