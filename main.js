@@ -4,8 +4,7 @@ dotenv.config();
 import ssh2Pkg from "ssh2";
 import fs from "fs";
 import path from "path";
-import JailManager from "./src/jail-manager/jail-manager.js";
-import NotificationManager from "./src/notification-manager/notification-manager.js";
+import JailManager from "./src/jail-manager.js";
 
 try {
   console.log = console.log.bind(console, `[${new Date()}]`);
@@ -14,26 +13,29 @@ try {
 
   const { Server } = ssh2Pkg;
 
+  const PORT = process.env.PORT || 2222;
+
   // 알림을 위한 임계값
   // ban된 ip 개수가 해당 값 이상일 때, ban된 ip의 개수가 증가할 때마다 알림
-  const NOTIFY_TRESHOLD = process.env.NOTIFY_TRESHOLD || 3;
-
-  const PORT = process.env.PORT || 2222;
-  const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || null;
 
   const NUMBER_OF_ATTEMPTS_FOR_ONE_CONNECTION = 3;
   const ATTEMPT_INTERVAL = 1024;
   const AUTH_METHOD = "password";
 
-  const NUMBER_OF_ATTEMPTS_TO_BAN = 2 * NUMBER_OF_ATTEMPTS_FOR_ONE_CONNECTION;
-  const BAN_DURATION = 24 * 60 * 60 * 1000;
+  const jailManager = new JailManager(path.resolve());
 
-  const jailManager = new JailManager(
-    path.resolve(),
-    NUMBER_OF_ATTEMPTS_TO_BAN,
-    BAN_DURATION
-  );
-  const notificationManager = new NotificationManager(DISCORD_WEBHOOK_URL);
+  const checkIp = (client, ip) => {
+    if (jailManager.isIPBanned(ip)) {
+      attemptsLog.push({
+        isBanned: true,
+      });
+      setTimeout(() => {
+        client.end();
+      }, ATTEMPT_INTERVAL);
+
+      return;
+    }
+  };
 
   const server = new Server(
     {
@@ -46,20 +48,9 @@ try {
       let attemptCount = 0;
       const attemptsLog = []; // 시도한 id, 비밀번호 저장
 
-      client.on("handshake", (ctx) => {
-        if (jailManager.isIPBanned(clientIP)) {
-          attemptsLog.push({
-            isBanned: true,
-          });
-          setTimeout(() => {
-            client.end();
-          }, ATTEMPT_INTERVAL);
-
-          return;
-        }
-      });
-
       client.on("authentication", (ctx) => {
+        checkIp(client, clientIP);
+
         if (ctx.method !== AUTH_METHOD) {
           return setTimeout(() => {
             ctx.reject([AUTH_METHOD]);
@@ -89,15 +80,6 @@ try {
 
       client.on("end", () => {
         console.log(`[${clientIP}] | ${JSON.stringify(attemptsLog)}`);
-
-        if (jailManager.getNumberOfBanList() >= NOTIFY_TRESHOLD) {
-          const currentNumberOfBanList = jailManager.getNumberOfBanList();
-          const bannedIp = jailManager.getBannedIpList();
-
-          notificationManager.toDiscord(
-            `:closed_lock_with_key: IP ${clientIP} banned. ${currentNumberOfBanList} IPs are banned. \nBanned IP: ${bannedIp}`
-          );
-        }
       });
 
       client.on("close", () => {
