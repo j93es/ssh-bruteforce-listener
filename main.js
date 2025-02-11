@@ -37,9 +37,6 @@ try {
 
       client.on("authentication", (ctx) => {
         if (jailManager.isIPBanned(clientIP)) {
-          attemptsLog.push({
-            isBanned: true,
-          });
           setTimeout(() => {
             client.end();
           }, ATTEMPT_INTERVAL);
