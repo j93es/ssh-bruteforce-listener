@@ -73,6 +73,9 @@ try {
 
       client.on("authentication", (ctx) => {
         if (jailManager.isIPBanned(clientIP)) {
+          attemptsLog.push({
+            status: "ban",
+          });
           setTimeout(() => {
             client.end();
           }, ATTEMPT_INTERVAL);
@@ -86,14 +89,23 @@ try {
           }, ATTEMPT_INTERVAL);
         }
 
-        attemptCount++;
-
         const { username, password } = ctx;
-        attemptsLog.push({
-          id: username,
-          pw: password,
-        });
+        if (username.length > 32) {
+          attemptsLog.push({
+            status: "long id",
+          });
+        } else if (password.length > 32) {
+          attemptsLog.push({
+            status: "long pw",
+          });
+        } else {
+          attemptsLog.push({
+            id: username,
+            pw: password,
+          });
+        }
 
+        attemptCount++;
         jailManager.recordFailedAttempt(clientIP);
 
         if (attemptCount < NUMBER_OF_ATTEMPTS_FOR_ONE_CONNECTION) {
@@ -108,7 +120,7 @@ try {
       });
 
       client.on("end", () => {
-        console.log(`[${clientIP}] | ${JSON.stringify(attemptsLog)}`);
+        console.log(`[${clientIP}] ${JSON.stringify(attemptsLog)}`);
       });
 
       client.on("close", () => {
@@ -123,6 +135,7 @@ try {
   );
 
   server.maxConnections = 5;
+  server.setMaxListeners(5);
 
   // 서버 실행
   server.listen(PORT, "0.0.0.0", () => {
