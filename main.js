@@ -5,48 +5,9 @@ import ssh2Pkg from "ssh2";
 import fs from "fs";
 import path from "path";
 import JailManager from "./src/jail-manager.js";
-
-const formatDateToCustomString = (date) => {
-  const koreaDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-  const day = koreaDate.getUTCDate().toString().padStart(2, "0");
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const month = monthNames[koreaDate.getUTCMonth()];
-  const year = koreaDate.getUTCFullYear();
-  const hours = koreaDate.getUTCHours().toString().padStart(2, "0");
-  const minutes = koreaDate.getUTCMinutes().toString().padStart(2, "0");
-  const seconds = koreaDate.getUTCSeconds().toString().padStart(2, "0");
-
-  const formattedDate = `${day}/${month}/${year}:${hours}:${minutes}:${seconds} +0900`;
-  return formattedDate;
-};
+import { getDateStr } from "./src/getDateStr.js";
 
 try {
-  console.log = console.log.bind(
-    console,
-    `[${formatDateToCustomString(new Date())}]`
-  );
-  console.info = console.info.bind(
-    console,
-    `[${formatDateToCustomString(new Date())}]`
-  );
-  console.error = console.error.bind(
-    console,
-    `[${formatDateToCustomString(new Date())}]`
-  );
-
   const { Server } = ssh2Pkg;
 
   const PORT = process.env.PORT || 2222;
@@ -59,6 +20,23 @@ try {
   const AUTH_METHOD = "password";
 
   const jailManager = new JailManager(path.resolve());
+
+  const originalLog = console.log;
+  const originalInfo = console.info;
+  const originalError = console.error;
+
+  // 새로운 로깅 함수 정의 (원래 메서드 호출)
+  console.log = (...args) => {
+    originalLog(`[${getDateStr()}]`, ...args);
+  };
+
+  console.info = (...args) => {
+    originalInfo(`[${getDateStr()}]`, ...args);
+  };
+
+  console.error = (...args) => {
+    originalError(`[${getDateStr()}]`, ...args);
+  };
 
   const server = new Server(
     {
