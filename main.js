@@ -45,7 +45,7 @@ try {
         "All your inputs are recorded. If you do not agree, please close the connection.",
     },
     (client) => {
-      const clientIP = client._sock.remoteAddress;
+      const clientIP = `${client._sock.remoteAddress}`;
       let attemptCount = 0;
       const attemptsLog = []; // 시도한 id, 비밀번호 저장
 
