@@ -50,6 +50,10 @@ try {
       const attemptsLog = []; // 시도한 id, 비밀번호 저장
 
       client.on("authentication", (ctx) => {
+        const method = `${ctx.method}`;
+        const username = `${ctx.username}`;
+        const password = `${ctx.password}`;
+
         if (jailManager.isIPBanned(clientIP)) {
           attemptsLog.push({
             status: "ban",
@@ -61,13 +65,12 @@ try {
           return;
         }
 
-        if (ctx.method !== AUTH_METHOD) {
+        if (method !== AUTH_METHOD) {
           return setTimeout(() => {
             ctx.reject([AUTH_METHOD]);
           }, ATTEMPT_INTERVAL);
         }
 
-        const { username, password } = ctx;
         if (username.length > 32) {
           attemptsLog.push({
             status: "long id",
