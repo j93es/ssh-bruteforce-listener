@@ -5,7 +5,6 @@ import ssh2Pkg from "ssh2";
 import fs from "fs";
 import path from "path";
 import JailManager from "./src/jail-manager.js";
-import { getDateStr } from "./src/getDateStr.js";
 
 try {
   const { Server } = ssh2Pkg;
@@ -25,17 +24,21 @@ try {
   const originalInfo = console.info;
   const originalError = console.error;
 
+  const getTimeStr = () => {
+    return new Date(new Date().getTime() + 9 * 60 * 60 * 1000).toISOString();
+  };
+
   // 새로운 로깅 함수 정의 (원래 메서드 호출)
   console.log = (...args) => {
-    originalLog(`[${getDateStr()}]`, ...args);
+    originalLog(`[${getTimeStr()}]`, ...args);
   };
 
   console.info = (...args) => {
-    originalInfo(`[${getDateStr()}]`, ...args);
+    originalInfo(`[${getTimeStr()}]`, ...args);
   };
 
   console.error = (...args) => {
-    originalError(`[${getDateStr()}]`, ...args);
+    originalError(`[${getTimeStr()}]`, ...args);
   };
 
   const server = new Server(
