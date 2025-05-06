@@ -4,6 +4,7 @@ dotenv.config();
 import ssh2Pkg from "ssh2";
 import fs from "fs";
 import path from "path";
+import { isIP } from "net";
 import JailManager from "./src/jail-manager.js";
 
 try {
@@ -56,6 +57,17 @@ try {
         const method = `${ctx.method}`;
         const username = `${ctx.username}`;
         const password = `${ctx.password}`;
+
+        if (!isIP(clientIP)) {
+          attemptsLog.push({
+            status: `invalid ip "${clientIP}"`,
+          });
+          setTimeout(() => {
+            client.end();
+          }, ATTEMPT_INTERVAL);
+
+          return;
+        }
 
         if (jailManager.isIPBanned(clientIP)) {
           attemptsLog.push({
