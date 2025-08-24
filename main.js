@@ -134,7 +134,7 @@ try {
   server.setMaxListeners(5);
 
   // 서버 실행
-  server.listen(PORT, "0.0.0.0", () => {
+  server.listen(PORT, "127.0.0.1", () => {
     console.log(`SSH 서버가 ${PORT}번 포트에서 실행 중...`);
   });
 } catch (error) {
