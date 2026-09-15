@@ -36,7 +36,7 @@ init:
 	fi
 	
 build:
-	cd $(PROJECT_DIR) && sudo npm install && sudo chmod 660 $(PROJECT_DIR)/jail.json
+	cd $(PROJECT_DIR) && sudo npm install && sudo chmod 666 $(PROJECT_DIR)/jail.json
 
 stop-pm2:
 	sudo pm2 stop ssh-bruteforce-listener || true && sudo pm2 delete ssh-bruteforce-listener || true
