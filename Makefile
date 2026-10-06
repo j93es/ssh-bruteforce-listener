@@ -53,4 +53,9 @@ deploy: update init build stop-pm2 start-pm2 save-pm2
 deploy-force: update-force init build stop-pm2 start-pm2 save-pm2
 	@echo "Deployment completed."
 
+audit: 
+	cd $(PROJECT_DIR) && sudo npm audit fix
+
+auto-audit: audit build stop-pm2 start-pm2 save-pm2
+
 all: deploy
