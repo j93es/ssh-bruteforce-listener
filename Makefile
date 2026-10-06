@@ -1,6 +1,6 @@
 # Variables
 REPO_URL=https://github.com/j93es/ssh-bruteforce-listener.git
-PROJECT_DIR=/srv/ssh-bruteforce-listener
+PROJECT_DIR=/srv/ssh-bruteforce-listener/ssh-bruteforce-listener
 
 # Targets
 .PHONY: all init update build deploy start-pm2 stop-pm2 save-pm2
